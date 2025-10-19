@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Definição da struct Sala
+typedef struct Sala {
+    char nome[50];
+    struct Sala *esquerda;
+    struct Sala *direita;
+} Sala;
+
+// Função para criar uma sala dinamicamente
+Sala* criarSala(const char* nome) {
+    Sala* novaSala = (Sala*)malloc(sizeof(Sala));
+    if (novaSala == NULL) {
+        printf("Erro ao alocar memória!\n");
+        exit(1);
+    }
+    strcpy(novaSala->nome, nome);
+    novaSala->esquerda = NULL;
+    novaSala->direita = NULL;
+    return novaSala;
+}
+
+// Função para explorar as salas da mansão
+void explorarSalas(Sala* atual) {
+    char escolha;
+
+    while (atual != NULL) {
+        printf("\nVocê está na sala: %s\n", atual->nome);
+
+        // Verifica se é uma sala final (sem caminhos)
+        if (atual->esquerda == NULL && atual->direita == NULL) {
+            printf("Não há mais caminhos nesta sala. Fim da exploração!\n");
+            return;
+        }
+
+        // Menu de opções
+        printf("Escolha um caminho: (e) esquerda, (d) direita, (s) sair: ");
+        scanf(" %c", &escolha);
+
+        if (escolha == 'e' || escolha == 'E') {
+            if (atual->esquerda != NULL) {
+                atual = atual->esquerda;
+            } else {
+                printf("Não há sala à esquerda!\n");
+            }
+        } else if (escolha == 'd' || escolha == 'D') {
+            if (atual->direita != NULL) {
+                atual = atual->direita;
+            } else {
+                printf("Não há sala à direita!\n");
+            }
+        } else if (escolha == 's' || escolha == 'S') {
+            printf("Exploração encerrada pelo jogador.\n");
+            return;
+        } else {
+            printf("Opção inválida! Tente novamente.\n");
+        }
+    }
+}
+
+// Função principal
+int main() {
+    // Criando salas da mansão
+    Sala* hall = criarSala("Hall de entrada");
+    Sala* cozinha = criarSala("Cozinha");
+    Sala* salaEstar = criarSala("Sala de estar");
+    Sala* biblioteca = criarSala("Biblioteca");
+    Sala* jardim = criarSala("Jardim");
+    Sala* quarto = criarSala("Quarto secreto");
+
+    // Montando a árvore da mansão
+    hall->esquerda = cozinha;
+    hall->direita = salaEstar;
+    cozinha->esquerda = biblioteca;
+    cozinha->direita = jardim;
+    salaEstar->direita = quarto;
+
+    // Início da exploração
+    printf("Bem-vindo(a) ao Detective Quest!\n");
+    explorarSalas(hall);
+
+    // Liberando memória
+    free(hall);
+    free(cozinha);
+    free(salaEstar);
+    free(biblioteca);
+    free(jardim);
+    free(quarto);
+
+    return 0;
+}
